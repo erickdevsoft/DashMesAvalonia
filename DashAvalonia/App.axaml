@@ -1,0 +1,25 @@
+﻿<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="DashAvalonia.App"
+             xmlns:local="using:DashAvalonia"
+             RequestedThemeVariant="Dark">
+             <!-- The dashboard starts in dark mode (control-room friendly); the header toggle switches to Light. -->
+
+    <Application.DataTemplates>
+        <local:ViewLocator />
+    </Application.DataTemplates>
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/Styles/Theme.axaml" />
+                <ResourceInclude Source="/Styles/ControlThemes.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="/Styles/Styles.axaml" />
+    </Application.Styles>
+</Application>

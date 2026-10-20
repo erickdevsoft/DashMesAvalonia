@@ -1,0 +1,64 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Design tokens. Each theme defines the same keys; controls reference them with DynamicResource
+         so switching RequestedThemeVariant re-skins the whole dashboard. -->
+    <ResourceDictionary.ThemeDictionaries>
+
+        <ResourceDictionary x:Key="Dark">
+            <SolidColorBrush x:Key="PageBrush" Color="#0B0F14" />
+            <SolidColorBrush x:Key="SidebarBrush" Color="#10151C" />
+            <SolidColorBrush x:Key="SurfaceBrush" Color="#151B23" />
+            <SolidColorBrush x:Key="Surface2Brush" Color="#1B222C" />
+            <SolidColorBrush x:Key="HoverBrush" Color="#1E2630" />
+            <SolidColorBrush x:Key="PressedBrush" Color="#26303C" />
+            <SolidColorBrush x:Key="SegmentSelectedBrush" Color="#2A3441" />
+            <SolidColorBrush x:Key="HairlineBrush" Color="#242D38" />
+            <SolidColorBrush x:Key="GridBrush" Color="#212933" />
+            <SolidColorBrush x:Key="AxisBrush" Color="#36414E" />
+            <SolidColorBrush x:Key="TextPrimaryBrush" Color="#EEF2F6" />
+            <SolidColorBrush x:Key="TextSecondaryBrush" Color="#AEB8C4" />
+            <SolidColorBrush x:Key="TextMutedBrush" Color="#7C8896" />
+            <SolidColorBrush x:Key="AccentBrush" Color="#3987E5" />
+            <SolidColorBrush x:Key="AccentSoftBrush" Color="#263987E5" />
+            <SolidColorBrush x:Key="AccentTextBrush" Color="#6DA7EC" />
+            <SolidColorBrush x:Key="TooltipBrush" Color="#1F2731" />
+            <SolidColorBrush x:Key="DeltaGoodBrush" Color="#2DBA2D" />
+            <SolidColorBrush x:Key="DeltaGoodSoftBrush" Color="#1F0CA30C" />
+            <SolidColorBrush x:Key="DeltaBadBrush" Color="#EE7B7B" />
+            <SolidColorBrush x:Key="DeltaBadSoftBrush" Color="#24E66767" />
+        </ResourceDictionary>
+
+        <ResourceDictionary x:Key="Light">
+            <SolidColorBrush x:Key="PageBrush" Color="#F2F4F7" />
+            <SolidColorBrush x:Key="SidebarBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="Surface2Brush" Color="#ECEFF3" />
+            <SolidColorBrush x:Key="HoverBrush" Color="#F4F6F9" />
+            <SolidColorBrush x:Key="PressedBrush" Color="#E3E8EE" />
+            <SolidColorBrush x:Key="SegmentSelectedBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="HairlineBrush" Color="#E1E6EC" />
+            <SolidColorBrush x:Key="GridBrush" Color="#EDF0F4" />
+            <SolidColorBrush x:Key="AxisBrush" Color="#C9D1DA" />
+            <SolidColorBrush x:Key="TextPrimaryBrush" Color="#0E1621" />
+            <SolidColorBrush x:Key="TextSecondaryBrush" Color="#4A5462" />
+            <SolidColorBrush x:Key="TextMutedBrush" Color="#697382" />
+            <SolidColorBrush x:Key="AccentBrush" Color="#2A78D6" />
+            <SolidColorBrush x:Key="AccentSoftBrush" Color="#1A2A78D6" />
+            <SolidColorBrush x:Key="AccentTextBrush" Color="#1C5CAB" />
+            <SolidColorBrush x:Key="TooltipBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="DeltaGoodBrush" Color="#006300" />
+            <SolidColorBrush x:Key="DeltaGoodSoftBrush" Color="#1A0CA30C" />
+            <SolidColorBrush x:Key="DeltaBadBrush" Color="#B42828" />
+            <SolidColorBrush x:Key="DeltaBadSoftBrush" Color="#1AD03B3B" />
+        </ResourceDictionary>
+
+    </ResourceDictionary.ThemeDictionaries>
+
+    <!-- Status colors are fixed across themes and always paired with an icon or a label. -->
+    <SolidColorBrush x:Key="StatusGoodBrush" Color="#0CA30C" />
+    <SolidColorBrush x:Key="StatusWarningBrush" Color="#FAB219" />
+    <SolidColorBrush x:Key="StatusSeriousBrush" Color="#EC835A" />
+    <SolidColorBrush x:Key="StatusCriticalBrush" Color="#D03B3B" />
+
+</ResourceDictionary>

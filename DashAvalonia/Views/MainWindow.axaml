@@ -1,0 +1,571 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:DashAvalonia.ViewModels"
+        xmlns:ctl="using:DashAvalonia.Controls"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1600" d:DesignHeight="1000"
+        x:Class="DashAvalonia.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="MES · Panel de planta"
+        Width="1600" Height="980" MinWidth="1366" MinHeight="760"
+        WindowStartupLocation="CenterScreen">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainViewModel />
+    </Design.DataContext>
+
+    <Window.Styles>
+        <Style Selector="TextBlock.bad">
+            <Setter Property="Foreground" Value="{DynamicResource DeltaBadBrush}" />
+        </Style>
+    </Window.Styles>
+
+    <Window.DataTemplates>
+        <!-- Stat tile -->
+        <DataTemplate DataType="vm:KpiTileViewModel">
+            <Border Classes="card" Padding="18,16">
+                <Grid RowDefinitions="Auto,Auto,Auto,*">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Border Classes="iconwell">
+                            <ctl:LineIcon Data="{Binding Icon}" Width="16" Height="16"
+                                          Foreground="{DynamicResource TextSecondaryBrush}" />
+                        </Border>
+                        <TextBlock Text="{Binding Title}" Classes="label" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="5" Margin="0,14,0,0">
+                        <TextBlock Text="{Binding Value}" Classes="value" />
+                        <TextBlock Text="{Binding Unit}" Classes="unit" VerticalAlignment="Bottom" Margin="0,0,0,5" />
+                    </StackPanel>
+                    <Grid Grid.Row="2" ColumnDefinitions="Auto,*" Margin="0,6,0,0">
+                        <Border Classes="delta" Classes.good="{Binding DeltaIsGood}" Classes.bad="{Binding !DeltaIsGood}">
+                            <StackPanel Orientation="Horizontal" Spacing="3">
+                                <ctl:LineIcon Data="{x:Static ctl:Icons.ArrowUpRight}" Width="12" Height="12"
+                                              StrokeThickness="2" IsVisible="{Binding DeltaIsUp}" />
+                                <ctl:LineIcon Data="{x:Static ctl:Icons.ArrowDownRight}" Width="12" Height="12"
+                                              StrokeThickness="2" IsVisible="{Binding !DeltaIsUp}" />
+                                <TextBlock Text="{Binding Delta}" FontSize="11.5" FontWeight="SemiBold" />
+                            </StackPanel>
+                        </Border>
+                        <TextBlock Grid.Column="1" Text="{Binding Comparison}" Classes="caption" Margin="8,0,0,0"
+                                   VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                    </Grid>
+                    <ctl:Sparkline Grid.Row="3" Values="{Binding Trend}" Height="36" Margin="0,12,0,0"
+                                   VerticalAlignment="Bottom" />
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </Window.DataTemplates>
+
+    <Grid ColumnDefinitions="224,*">
+
+        <!-- ============================== Sidebar ============================== -->
+        <Border Background="{DynamicResource SidebarBrush}" BorderBrush="{DynamicResource HairlineBrush}"
+                BorderThickness="0,0,1,0">
+            <DockPanel Margin="16,20,16,16">
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="11" Margin="6,0,0,26">
+                    <Border Width="36" Height="36" CornerRadius="10" Background="{DynamicResource AccentBrush}">
+                        <ctl:LineIcon Data="{x:Static ctl:Icons.Factory}" Width="20" Height="20"
+                                      StrokeThickness="1.8" Foreground="White" />
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Planta Norte" FontSize="14.5" FontWeight="SemiBold" />
+                        <TextBlock Text="Sistema MES" Classes="caption" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Bottom" Spacing="14">
+                    <Border Classes="inset" Padding="14,12">
+                        <StackPanel Spacing="7">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="TURNO EN CURSO" Classes="overline" VerticalAlignment="Center" />
+                                <ctl:LineIcon Grid.Column="1" Data="{x:Static ctl:Icons.Clock}" Width="14" Height="14"
+                                              Foreground="{DynamicResource TextMutedBrush}" />
+                            </Grid>
+                            <TextBlock Text="{Binding CurrentShiftText}" FontWeight="SemiBold" />
+                            <ctl:MeterBar Value="{Binding ShiftProgress}" Height="5" Margin="0,2,0,0" />
+                            <TextBlock Text="{Binding ShiftRemainingText}" Classes="caption" />
+                        </StackPanel>
+                    </Border>
+                    <Grid ColumnDefinitions="Auto,*,Auto" Margin="4,0,0,0">
+                        <Border Width="34" Height="34" CornerRadius="17" Background="{DynamicResource AccentSoftBrush}">
+                            <TextBlock Text="SP" FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource AccentTextBrush}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="10,0,4,0" VerticalAlignment="Center">
+                            <TextBlock Text="Supervisor" FontSize="12.5" FontWeight="Medium"
+                                       TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="Operaciones" Classes="caption" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                        <Button Grid.Column="2" Theme="{StaticResource GhostButton}" Padding="6"
+                                ToolTip.Tip="Configuración">
+                            <ctl:LineIcon Data="{x:Static ctl:Icons.Sliders}" Width="16" Height="16" />
+                        </Button>
+                    </Grid>
+                </StackPanel>
+
+                <TextBlock DockPanel.Dock="Top" Text="OPERACIONES" Classes="overline" Margin="12,0,0,8" />
+                <ListBox Classes="nav" Theme="{StaticResource PlainListBox}"
+                         ItemContainerTheme="{StaticResource NavItem}"
+                         ItemsSource="{Binding NavItems}" SelectedItem="{Binding SelectedNav}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="vm:NavItemViewModel">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <ctl:LineIcon Data="{Binding Icon}" Width="18" Height="18" />
+                                <TextBlock Grid.Column="1" Text="{Binding Title}" Margin="12,0,0,0"
+                                           VerticalAlignment="Center" />
+                                <Border Grid.Column="2" Classes="badge" IsVisible="{Binding HasBadge}">
+                                    <TextBlock Text="{Binding Badge}" />
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Border>
+
+        <!-- ============================== Main ============================== -->
+        <Grid Grid.Column="1" RowDefinitions="Auto,*">
+
+            <!-- Header: title + the single filter row that scopes every chart below -->
+            <Border Padding="28,16" BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="0,0,0,1">
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{Binding PageTitle}" Classes="h1" />
+                        <TextBlock Text="{Binding HeaderSubtitle}" Classes="sub" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                        <ListBox Theme="{StaticResource SegmentedListBox}"
+                                 ItemContainerTheme="{StaticResource SegmentItem}"
+                                 ItemsSource="{Binding RangeOptions}" SelectedIndex="{Binding RangeIndex}"
+                                 IsVisible="{Binding IsOverview}" VerticalAlignment="Center" />
+                        <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsOverview}">
+                            <TextBlock Text="Turno" Classes="caption" VerticalAlignment="Center" />
+                            <ListBox Theme="{StaticResource SegmentedListBox}"
+                                     ItemContainerTheme="{StaticResource SegmentItem}"
+                                     ItemsSource="{Binding ShiftOptions}" SelectedIndex="{Binding ShiftIndex}"
+                                     VerticalAlignment="Center" />
+                        </StackPanel>
+                        <Border Classes="inset" CornerRadius="9" Padding="11,7" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Ellipse Classes="live" Width="8" Height="8" Fill="{DynamicResource StatusGoodBrush}"
+                                         VerticalAlignment="Center" />
+                                <TextBlock Text="En vivo" FontSize="12" FontWeight="Medium"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding ClockText}" Classes="num" FontSize="12" FontWeight="SemiBold"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <Button Theme="{StaticResource OutlineButton}" Width="36" Height="36" Padding="0"
+                                Command="{Binding ToggleThemeCommand}" ToolTip.Tip="Cambiar tema claro/oscuro">
+                            <Panel>
+                                <ctl:LineIcon Data="{x:Static ctl:Icons.Sun}" Width="17" Height="17"
+                                              IsVisible="{Binding IsDark}" />
+                                <ctl:LineIcon Data="{x:Static ctl:Icons.Moon}" Width="17" Height="17"
+                                              IsVisible="{Binding !IsDark}" />
+                            </Panel>
+                        </Button>
+                        <Panel ToolTip.Tip="{Binding AlarmsSubtitle}">
+                            <Border Width="36" Height="36" CornerRadius="8" BorderThickness="1"
+                                    BorderBrush="{DynamicResource HairlineBrush}" Background="{DynamicResource SurfaceBrush}">
+                                <ctl:LineIcon Data="{x:Static ctl:Icons.Bell}" Width="17" Height="17"
+                                              Foreground="{DynamicResource TextSecondaryBrush}" />
+                            </Border>
+                            <Border Classes="badge" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                    Margin="0,-6,-6,0" IsVisible="{Binding HasAlarms}">
+                                <TextBlock Text="{Binding AlarmCount}" />
+                            </Border>
+                        </Panel>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Placeholder for modules not wired yet -->
+            <StackPanel Grid.Row="1" IsVisible="{Binding !IsOverview}" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" Spacing="10" MaxWidth="420">
+                <Border Width="56" Height="56" CornerRadius="16" Background="{DynamicResource AccentSoftBrush}"
+                        HorizontalAlignment="Center">
+                    <ctl:LineIcon Data="{Binding SelectedNav.Icon}" Width="26" Height="26"
+                                  Foreground="{DynamicResource AccentBrush}" />
+                </Border>
+                <TextBlock Text="{Binding PageTitle}" Classes="title" FontSize="18" HorizontalAlignment="Center" />
+                <TextBlock Classes="label" TextAlignment="Center" TextWrapping="Wrap"
+                           Text="Este módulo aún no está conectado a los datos de planta. Vuelve al resumen para ver el panel en tiempo real." />
+                <Button Theme="{StaticResource LinkButton}" HorizontalAlignment="Center"
+                        Command="{Binding GoToOverviewCommand}" Content="Ir al resumen" />
+            </StackPanel>
+
+            <ScrollViewer Grid.Row="1" IsVisible="{Binding IsOverview}" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Margin="28,24,28,32" Spacing="16">
+
+                    <!-- ===== Row A: OEE + stat tiles ===== -->
+                    <Grid ColumnDefinitions="1.9*,*,*,*,*" ColumnSpacing="16">
+                        <Border Classes="card">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <ctl:RingGauge Width="128" Height="128" Value="{Binding Oee}" Target="85"
+                                               Caption="OEE" VerticalAlignment="Center" />
+                                <StackPanel Grid.Column="1" Margin="20,0,0,0" Spacing="12" VerticalAlignment="Center">
+                                    <StackPanel>
+                                        <TextBlock Text="OEE global" Classes="title" />
+                                        <TextBlock Text="Meta 85 %" Classes="sub"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                    <ItemsControl ItemsSource="{Binding OeeBreakdown}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Spacing="9" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="vm:MetricItem">
+                                                <StackPanel Spacing="5">
+                                                    <Grid ColumnDefinitions="*,Auto">
+                                                        <TextBlock Text="{Binding Name}" Classes="label" />
+                                                        <TextBlock Grid.Column="1" Text="{Binding Text}" FontSize="12.5"
+                                                                   FontWeight="SemiBold" />
+                                                    </Grid>
+                                                    <ctl:MeterBar Value="{Binding Fraction}" Height="5" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                        <ContentControl Grid.Column="1" Content="{Binding ProductionTile}" />
+                        <ContentControl Grid.Column="2" Content="{Binding ScrapTile}" />
+                        <ContentControl Grid.Column="3" Content="{Binding DowntimeTile}" />
+                        <ContentControl Grid.Column="4" Content="{Binding EnergyTile}" />
+                    </Grid>
+
+                    <!-- ===== Row B: production vs plan + equipment status ===== -->
+                    <Grid ColumnDefinitions="2*,*" ColumnSpacing="16" Height="372">
+                        <Border Classes="card">
+                            <Grid RowDefinitions="Auto,*">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding ProductionTitle}" Classes="title" />
+                                        <TextBlock Text="{Binding ProductionSubtitle}" Classes="sub"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16"
+                                                VerticalAlignment="Center">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <Border Width="14" Height="3" CornerRadius="1.5"
+                                                    Background="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
+                                            <TextBlock Text="Real" Classes="caption" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <Line StartPoint="0,1.5" EndPoint="14,1.5" StrokeThickness="1.5"
+                                                  StrokeDashArray="2,1.7" Stroke="{DynamicResource TextSecondaryBrush}"
+                                                  VerticalAlignment="Center" />
+                                            <TextBlock Text="Plan" Classes="caption" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <ListBox Theme="{StaticResource SegmentedListBox}"
+                                                 ItemContainerTheme="{StaticResource SegmentItem}"
+                                                 ItemsSource="{Binding ProductionViews}"
+                                                 SelectedIndex="{Binding ProductionViewIndex}" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <ctl:LineChart Grid.Row="1" Margin="0,18,0,0"
+                                               Labels="{Binding ProductionLabels}"
+                                               Values="{Binding ProductionActual}"
+                                               Reference="{Binding ProductionPlan}"
+                                               Unit=" u" SeriesName="Real" ReferenceName="Plan"
+                                               IsVisible="{Binding !ShowProductionTable}" />
+
+                                <Grid Grid.Row="1" Margin="0,16,0,0" RowDefinitions="Auto,*"
+                                      IsVisible="{Binding ShowProductionTable}">
+                                    <Border Background="{DynamicResource Surface2Brush}" CornerRadius="8" Padding="12,8">
+                                        <Grid ColumnDefinitions="*,*,*,*">
+                                            <TextBlock Text="Periodo" Classes="th" />
+                                            <TextBlock Grid.Column="1" Text="Real (u)" Classes="th" HorizontalAlignment="Right" />
+                                            <TextBlock Grid.Column="2" Text="Plan (u)" Classes="th" HorizontalAlignment="Right" />
+                                            <TextBlock Grid.Column="3" Text="Desvío" Classes="th" HorizontalAlignment="Right" />
+                                        </Grid>
+                                    </Border>
+                                    <ScrollViewer Grid.Row="1">
+                                        <ItemsControl ItemsSource="{Binding ProductionRows}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="vm:ProductionRow">
+                                                    <Border BorderBrush="{DynamicResource HairlineBrush}"
+                                                            BorderThickness="0,0,0,1" Padding="12,7">
+                                                        <Grid ColumnDefinitions="*,*,*,*">
+                                                            <TextBlock Text="{Binding Label}" Classes="label num" />
+                                                            <TextBlock Grid.Column="1" Text="{Binding Actual}" Classes="num"
+                                                                       FontWeight="Medium" HorizontalAlignment="Right" />
+                                                            <TextBlock Grid.Column="2" Text="{Binding Plan}" Classes="num label"
+                                                                       HorizontalAlignment="Right" />
+                                                            <TextBlock Grid.Column="3" Text="{Binding Deviation}" Classes="num"
+                                                                       Classes.bad="{Binding IsBehind}"
+                                                                       HorizontalAlignment="Right" />
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Column="1" Classes="card">
+                            <Grid RowDefinitions="Auto,*,Auto">
+                                <StackPanel>
+                                    <TextBlock Text="Estado de equipos" Classes="title" />
+                                    <TextBlock Text="{Binding MachinesSubtitle}" Classes="sub"
+                                               TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+                                <ctl:DonutChart Grid.Row="1" Margin="0,10" Slices="{Binding MachineSlices}"
+                                                Caption="equipos" Thickness="16" />
+                                <ItemsControl Grid.Row="2" ItemsSource="{Binding MachineLegend}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Spacing="7" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="vm:LegendItem">
+                                            <Grid ColumnDefinitions="Auto,*,Auto,44">
+                                                <Ellipse Width="9" Height="9" Fill="{Binding Brush}"
+                                                         VerticalAlignment="Center" />
+                                                <TextBlock Grid.Column="1" Text="{Binding Label}" Classes="label"
+                                                           Margin="10,0" VerticalAlignment="Center"
+                                                           TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Grid.Column="2" Text="{Binding Count}" FontWeight="SemiBold"
+                                                           Classes="num" VerticalAlignment="Center" />
+                                                <TextBlock Grid.Column="3" Text="{Binding Share}" Classes="caption num"
+                                                           HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- ===== Row C: OEE per line, downtime causes, first-pass yield ===== -->
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="16" Height="316">
+                        <Border Classes="card">
+                            <Grid RowDefinitions="Auto,*">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel>
+                                        <TextBlock Text="OEE por línea" Classes="title" />
+                                        <TextBlock Text="{Binding LineOeeSubtitle}" Classes="sub"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6"
+                                                VerticalAlignment="Top" Margin="8,3,0,0">
+                                        <Line StartPoint="0,1.5" EndPoint="14,1.5" StrokeThickness="1"
+                                              StrokeDashArray="4,3" Stroke="{DynamicResource TextSecondaryBrush}"
+                                              VerticalAlignment="Center" />
+                                        <TextBlock Text="Meta 85 %" Classes="caption" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Grid>
+                                <ctl:ColumnChart Grid.Row="1" Margin="0,16,0,0"
+                                                 Labels="{Binding LineCodes}" Details="{Binding LineNames}"
+                                                 Values="{Binding LineOee}" Target="85" YMax="100"
+                                                 ValueFormat="0.0" Unit="%" SeriesName="OEE" />
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Column="1" Classes="card">
+                            <Grid RowDefinitions="Auto,*">
+                                <StackPanel>
+                                    <TextBlock Text="Principales causas de paro" Classes="title" />
+                                    <TextBlock Text="{Binding DowntimeSubtitle}" Classes="sub"
+                                               TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+                                <ctl:BarListChart Grid.Row="1" Margin="0,16,0,0" Items="{Binding DowntimeCauses}"
+                                                  Unit=" min" ValueFormat="#,0.#" ValueName="Tiempo" />
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Column="2" Classes="card">
+                            <Grid RowDefinitions="Auto,*">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel>
+                                        <TextBlock Text="Calidad a la primera (FPY)" Classes="title"
+                                                   TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding FpySubtitle}" Classes="sub"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6"
+                                                VerticalAlignment="Top" Margin="8,3,0,0">
+                                        <Line StartPoint="0,1.5" EndPoint="14,1.5" StrokeThickness="1"
+                                              StrokeDashArray="4,3" Stroke="{DynamicResource TextSecondaryBrush}"
+                                              VerticalAlignment="Center" />
+                                        <TextBlock Text="Meta 95 %" Classes="caption" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Grid>
+                                <ctl:LineChart Grid.Row="1" Margin="0,16,0,0"
+                                               Labels="{Binding FpyLabels}" Values="{Binding FpyValues}"
+                                               Target="95" YMin="90" YMax="100"
+                                               ValueFormat="0.0" Unit="%" SeriesName="FPY" />
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- ===== Row D: work orders + active alarms ===== -->
+                    <Grid ColumnDefinitions="2*,*" ColumnSpacing="16">
+                        <Border Classes="card" Padding="0">
+                            <StackPanel>
+                                <Grid ColumnDefinitions="*,Auto" Margin="20,18,20,14">
+                                    <StackPanel>
+                                        <TextBlock Text="Órdenes de producción" Classes="title" />
+                                        <TextBlock Text="{Binding OrdersSubtitle}" Classes="sub"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                    <ListBox Grid.Column="1" Theme="{StaticResource SegmentedListBox}"
+                                             ItemContainerTheme="{StaticResource SegmentItem}"
+                                             ItemsSource="{Binding OrderFilters}"
+                                             SelectedIndex="{Binding OrderFilterIndex}"
+                                             VerticalAlignment="Center" Margin="12,0,0,0">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate DataType="vm:FilterOption">
+                                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                                    <TextBlock Text="{Binding Title}" />
+                                                    <TextBlock Text="{Binding Count}" Classes="num"
+                                                               Foreground="{DynamicResource TextMutedBrush}" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </Grid>
+
+                                <Border Background="{DynamicResource Surface2Brush}" Padding="20,9"
+                                        BorderBrush="{DynamicResource HairlineBrush}" BorderThickness="0,1,0,0">
+                                    <Grid ColumnDefinitions="2*,*,1.5*,96,124,86">
+                                        <TextBlock Text="ORDEN / PRODUCTO" Classes="th" />
+                                        <TextBlock Grid.Column="1" Text="LÍNEA" Classes="th" />
+                                        <TextBlock Grid.Column="2" Text="PROGRESO" Classes="th" />
+                                        <TextBlock Grid.Column="3" Text="CANTIDAD" Classes="th"
+                                                   HorizontalAlignment="Right" Margin="0,0,20,0" />
+                                        <TextBlock Grid.Column="4" Text="ESTADO" Classes="th" />
+                                        <TextBlock Grid.Column="5" Text="FIN EST." Classes="th" HorizontalAlignment="Right" />
+                                    </Grid>
+                                </Border>
+
+                                <ItemsControl ItemsSource="{Binding VisibleOrders}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="vm:OrderViewModel">
+                                            <Border Classes="tr">
+                                                <Grid ColumnDefinitions="2*,*,1.5*,96,124,86">
+                                                    <StackPanel VerticalAlignment="Center" Margin="0,0,12,0">
+                                                        <TextBlock Text="{Binding Product}" FontWeight="Medium"
+                                                                   TextTrimming="CharacterEllipsis" />
+                                                        <TextBlock Classes="caption" TextTrimming="CharacterEllipsis">
+                                                            <Run Text="{Binding Id}" />
+                                                            <Run Text="·" />
+                                                            <Run Text="{Binding Sku}" />
+                                                        </TextBlock>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,12,0">
+                                                        <TextBlock Text="{Binding LineCode}" FontWeight="Medium" />
+                                                        <TextBlock Text="{Binding LineName}" Classes="caption"
+                                                                   TextTrimming="CharacterEllipsis" />
+                                                    </StackPanel>
+                                                    <Grid Grid.Column="2" ColumnDefinitions="*,46" VerticalAlignment="Center"
+                                                          Margin="0,0,8,0">
+                                                        <ctl:MeterBar Value="{Binding Progress}" Fill="{Binding MeterBrush}"
+                                                                      Height="6" VerticalAlignment="Center" />
+                                                        <TextBlock Grid.Column="1" Text="{Binding ProgressText}"
+                                                                   Classes="label num" HorizontalAlignment="Right" />
+                                                    </Grid>
+                                                    <StackPanel Grid.Column="3" VerticalAlignment="Center" Margin="0,0,20,0">
+                                                        <TextBlock Text="{Binding DoneText}" Classes="num" FontWeight="Medium"
+                                                                   HorizontalAlignment="Right" />
+                                                        <TextBlock Text="{Binding TargetText}" Classes="caption num"
+                                                                   HorizontalAlignment="Right" />
+                                                    </StackPanel>
+                                                    <Border Grid.Column="4" Classes="chip" Background="{Binding StatusSoftBrush}">
+                                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                                            <Ellipse Width="7" Height="7" Fill="{Binding StatusBrush}"
+                                                                     VerticalAlignment="Center" />
+                                                            <TextBlock Text="{Binding StatusText}" FontSize="12"
+                                                                       FontWeight="Medium" />
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <TextBlock Grid.Column="5" Text="{Binding EtaText}" Classes="label num"
+                                                               HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1" Classes="card" Padding="0">
+                            <DockPanel>
+                                <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="20,18,14,14">
+                                    <StackPanel>
+                                        <TextBlock Text="Alarmas activas" Classes="title" />
+                                        <TextBlock Text="{Binding AlarmsSubtitle}" Classes="sub"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Theme="{StaticResource LinkButton}"
+                                            Content="Reconocer todas" Command="{Binding AcknowledgeAllCommand}"
+                                            IsVisible="{Binding HasAlarms}" VerticalAlignment="Center" />
+                                </Grid>
+                                <Panel>
+                                    <ItemsControl ItemsSource="{Binding Alarms}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="vm:AlarmViewModel">
+                                                <Border Classes="tr" Padding="20,12,14,12">
+                                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                                        <Border Width="32" Height="32" CornerRadius="8"
+                                                                Background="{Binding SeveritySoftBrush}"
+                                                                VerticalAlignment="Top">
+                                                            <ctl:LineIcon Data="{Binding SeverityIcon}" Width="17" Height="17"
+                                                                          Foreground="{Binding SeverityBrush}" />
+                                                        </Border>
+                                                        <StackPanel Grid.Column="1" Margin="12,0,8,0" Spacing="3"
+                                                                    VerticalAlignment="Center">
+                                                            <TextBlock Text="{Binding Title}" FontWeight="Medium"
+                                                                       TextWrapping="Wrap" />
+                                                            <TextBlock Classes="caption" TextTrimming="CharacterEllipsis">
+                                                                <Run Text="{Binding SeverityText}" FontWeight="SemiBold"
+                                                                     Foreground="{DynamicResource TextSecondaryBrush}" />
+                                                                <Run Text="·" />
+                                                                <Run Text="{Binding Source}" />
+                                                                <Run Text="·" />
+                                                                <Run Text="{Binding Age}" />
+                                                            </TextBlock>
+                                                        </StackPanel>
+                                                        <Button Grid.Column="2" Theme="{StaticResource GhostButton}"
+                                                                Width="32" Height="32" Padding="0" VerticalAlignment="Center"
+                                                                Command="{Binding AcknowledgeCommand}"
+                                                                ToolTip.Tip="Reconocer alarma">
+                                                            <ctl:LineIcon Data="{x:Static ctl:Icons.Check}" Width="16" Height="16" />
+                                                        </Button>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <StackPanel IsVisible="{Binding !HasAlarms}" HorizontalAlignment="Center"
+                                                VerticalAlignment="Center" Spacing="8" Margin="0,28">
+                                        <ctl:LineIcon Data="{x:Static ctl:Icons.CheckCircle}" Width="30" Height="30"
+                                                      Foreground="{DynamicResource StatusGoodBrush}"
+                                                      HorizontalAlignment="Center" />
+                                        <TextBlock Text="Todo en orden" Classes="title" HorizontalAlignment="Center" />
+                                        <TextBlock Text="No hay alarmas pendientes de reconocer." Classes="sub"
+                                                   HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Panel>
+                            </DockPanel>
+                        </Border>
+                    </Grid>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>
